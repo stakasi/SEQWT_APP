@@ -4,7 +4,7 @@
 	id		= "com.Satay.SEQWT"
 	version 	= "2.0.0">
 
-	<name>Satya's ATDW Mobile App</name>
+	<name>Satya's ATDW Mobile App(via GitHub)</name>
 	<description>My First Mobile app for SEQWT Walking Trails</description>
 	<author href="https://github.com/stakasi" email="stakasi@zlab.com.au">Satya Takasi</author>
 	<gap:platforms>
