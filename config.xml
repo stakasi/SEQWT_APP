@@ -15,5 +15,5 @@
 		<gap:platform name="blackberry" project="widgets"/>
 	</gap:platforms>
 	<icon src="icon.png" gap:role="default" />
-    <gap:splash src="icon.png" />
+    <gap:splash src="StartImg.png" />
 </widget>
