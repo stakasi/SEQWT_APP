@@ -2,45 +2,84 @@
 <html>
 	<head>
 		<meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width" />
+    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.css" />
+     <link rel="stylesheet" href="bootstrap/css/bootstrap.css" />
+    <script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
+    <script src="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.js"></script>
+	<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/knockout/2.1.0/knockout-min.js"></script>
 		<title>Training App</title>
-		<script> alert('page loaded');</script>
+		  <script type="text/javascript">
+          $(document).ready(function () {
+            alert("App Working Fine");
+			LoadATDWDate();
+           
+        });
+		
+function LoadATDWDate(){
+
+    var WebUrl = "http://maps.atdw.com.au/GeoWebService.svc/maps/product/87B11FC1-5FCA-4F03-94E6-6419BBC8F395/XML/keyword/gold%20coast/JOURNEY/50/1/";
+
+    $.ajax({
+        type: "GET",
+        url: WebUrl,
+        dataType: "xml",
+        success: xmlParser
+    })
+}
+
+function xmlParser(xml) {
+    $('#div_AtdwInfo').html("<table  ");
+    var Rowdata = "<tr>";
+    $(xml).find("Product").each(function () {
+        Rowdata = "<tr>"
+        Rowdata = Rowdata + "<td>" + $(this).find("ID").text() + "</td>";
+        Rowdata = Rowdata + "<td>" + $(this).find("Name").text() + "</td>";
+        Rowdata = Rowdata + "<td><img height='40px' width='40px' src='" + $(this).find("ImageUrl").text() + "' alt='NoImage'/></td>";
+        Rowdata = Rowdata + "</tr>";
+        $("#div_AtdwInfo").append(Rowdata);
+    });
+    $("#div_AtdwInfo").append("</table>");
+
+}
+   
+    </script>
 	</head>
-	<body>
- 		<div id="title_bar">Phone<strong>Gap</strong> Training App</div>
 
-		<div id="welcome" class="view">
-		  <div class="app_button" id="map_button">Show My Location</div>
-  	      <div class="app_button" id="settings_button">Settings</div>
+    <style>
+        table {
+    color: black;
+    background: #fff;
+    border: 1px solid #b4b4b4;
+    font: bold 17px helvetica;
+    padding: 0;
+    margin-top:10px;
+    width: 100%;
+    -webkit-border-radius: 8px;
+}
+     
+table tr td {
+    color: #666;
+    border-bottom: 1px solid #b4b4b4;
+    border-right: 1px solid #b4b4b4;
+    padding: 10px 10px 10px 10px;
+    background-image: -webkit-linear-gradient(top, #fdfdfd, #eee);
+}
+         
+table tr td:last-child {
+    border-right: none;
+}
+
+table tr:last-child td {
+    border-bottom: none;
+}
+    </style>
+	<body bgcolor="wheat">
+ 		<div id="title_bar"><h1>ATDW Data Records</h1> </div><br />
+		
+		
+		<div id="div_AtdwInfo">
+         ATDW Data loading....
+		<img src="Images/loading.gif" alt="Loading" />
 		</div>
-
-		<div id="map" class="view">
-		  <div class="map_image">
-              <img id="static_map" src="assets/img/staticmap.png">
-		  </div>
-		  <p>This is where you are</p>
-		  <div class="app_button" id="welcome_button">Go Back</div>
-		</div>
-
-		<div id="settings" class="view">
-		  <form id="settings_form">
-		    <fieldset>
-		      <legend>Map Type</legend>
-			  <input type="radio" name="map" value="roadmap" checked>Road Map<br/>
-		      <input type="radio" name="map" value="satellite">Satellite<br/>
-		      <input type="radio" name="map" value="terrain">Terrain<br/>
-		      <input type="radio" name="map" value="hybrid">Hybrid<br/>
-		    </fieldset>
-		    <fieldset>
-		      <legend>Zoom Level</legend>
-  		      <input type="radio" name="zoom" value="10">Super Far<br/>
-  		      <input type="radio" name="zoom" value="12">Far<br/>
-  		      <input type="radio" name="zoom" value="15" checked>Normal<br/>
-  		      <input type="radio" name="zoom" value="18">Close<br/>
-  		      <input type="radio" name="zoom" value="20">Super Close<br/>
-  		     </fieldset>
-		      <button id="save_button">Save</button>
-	      </form>
-		</div>
-
 	</body>
 </html>
