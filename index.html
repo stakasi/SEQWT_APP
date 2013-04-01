@@ -10,7 +10,7 @@
 		<title>Training App</title>
 		  <script type="text/javascript">
           $(document).ready(function () {
-            alert("App Working Fine");
+           
 			LoadATDWDate();
            
         });
@@ -28,7 +28,7 @@ function LoadATDWDate(){
 }
 
 function xmlParser(xml) {
-    $('#div_AtdwInfo').html("<table  ");
+    $('#div_AtdwInfo').html("<table   data-role='listview' ");
     var Rowdata = "<tr>";
     $(xml).find("Product").each(function () {
         Rowdata = "<tr>"
