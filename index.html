@@ -11,10 +11,7 @@
 	<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/knockout/2.1.0/knockout-min.js"></script>
 		<title>Training App</title>
 		  <script type="text/javascript">
-          $(document).ready(function () {
-			LoadATDWDate();
-           
-        });
+          $(document).ready(function () {LoadATDWDate();});
 		
 function LoadATDWDate(){
     var WebUrl = "http://maps.atdw.com.au/GeoWebService.svc/maps/product/87B11FC1-5FCA-4F03-94E6-6419BBC8F395/XML/keyword/gold%20coast/JOURNEY/50/1/";
@@ -31,6 +28,7 @@ function xmlParser(xml) {
      $(xml).find("Product").each(function () {
          Rowdata = "<li data-corners='false' data-shadow='false' data-iconshadow='true' data-wrapperels='div' data-icon='arrow-r' data-iconpos='right' data-theme='c' class='ui-btn ui-btn-icon-right ui-li-has-arrow ui-li ui-btn-up-c'>"
          Rowdata = Rowdata + "<a href='#ProductDescription'  onclick='Display_Desc(\"" + $(this).find("ID").text() + "\");' class='ui-link-inherit'>"
+         //Rowdata = Rowdata + "<a href='#ProductDescription'  onclick='Display_Desc(\"" +this + "\");' class='ui-link-inherit'>"
          Rowdata = Rowdata + "<h3 class='ui-li-heading'>" + $(this).find("ID").text() + "</h3>";
          Rowdata = Rowdata + "<p class='ui-li-desc'>" + $(this).find("Name").text() + "</p>";
          Rowdata = Rowdata + "<div class='ui-btn-text'><img height='40px' width='40px' src='" + $(this).find("ImageUrl").text() + "' /> </div></a>";
@@ -43,17 +41,44 @@ function xmlParser(xml) {
 
 
 function Display_Desc(ProductId) {
-    alert(ProductId);
-    var WebUrl = "http://maps.atdw.com.au/GeoWebService.svc/product/87B11FC1-5FCA-4F03-94E6-6419BBC8F395/XML/"+ProductId;
-    $.ajax({type: "GET",url: WebUrl,dataType: "xml",success: DescParser})
+   
+    //var WebUrl = "http://maps.atdw.com.au/GeoWebService.svc/product/87B11FC1-5FCA-4F03-94E6-6419BBC8F395/XML/" + ProductId;
+    var WebUrl = "http://maps.atdw.com.au/GeoWebService.svc/maps/product/87B11FC1-5FCA-4F03-94E6-6419BBC8F395/XML/keyword/gold%20coast/JOURNEY/50/1/";
+    $("#ProdDesc_Con").html("");
+    $.ajax({
+        type: "GET",
+        url: WebUrl,
+        dataType: "xml",
+        success: function (data) { DescParser(data,ProductId) },
+        error: function (msg) { alert(ko.toJSON(msg)); }
+    })
 }
 
-function DescParser(xml) {
-    alert(xml);
-    var PName=$(this).find("Name").text();
-    $('#h1_ProductDesc').val(PName);
-    $('#ProdDesc_Con').html("");
-    $("#ProdDesc_Temp").tmpl([1]).appendTo("#ProdDesc_Con");
+function DescParser(xml, ProductId) {
+    var Elements = [];
+    // var Values = [];
+    var ProductDetails;
+    $(xml).find("Product").each(function () {
+        var Pid = $(this).find("ID").text();
+        if (Pid == ProductId) {
+            ProductDetails = new Product($(this).find("Name").text(), $(this).find("Description").text(), $(this).find("ImageUrl").text(), $(this).find("Category").text(), $(this).find("Longitude").text(), $(this).find("Longitude").text());
+            Elements.push(ProductDetails);
+            $("#ProdDesc_Temp").tmpl(Elements).appendTo("#ProdDesc_Con");
+            $('#h1_ProductDesc').html($(this).find("Name").text());
+        }
+
+
+    });
+
+}
+
+function Product(ProductName, ProductDesc, ImageUrl, Category, Longitude, Latitude) {
+    this.ProductName = ProductName;
+    this.ProductDesc = ProductDesc;
+    this.ImageUrl = ImageUrl;
+    this.Category = Category;
+    this.Longitude = Longitude;
+    this.Latitude = Latitude;
 }
    
     </script>
@@ -79,7 +104,8 @@ function DescParser(xml) {
  
   <div data-role="page" id="ProductDescription">
 	<div data-role="header">
-	<h1 id="h1_ProductDesc"></h1>
+	<h1 id="h1_ProductDesc">Product Name (Id)</h1>
+     <img src="Images/walkingtrails.png" width="150" height="78" border="0" align="right" style="padding-bottom: 5px;" />
 	</div>
 	
 	<div data-role="content" id="ProdDesc_Con">
@@ -95,5 +121,77 @@ function DescParser(xml) {
 
 
 <script id="ProdDesc_Temp" type="text/x-jquery-tmpl">
-Product Description from Tempalte
+  
+<div id="content">
+        <div class="textarea">
+        <ul data-role='listview'  class='ui-listview' data-theme='c'>
+        <li  data-corners='false' data-shadow='false' data-iconshadow='true' data-wrapperels='div' data-icon='arrow-r' data-iconpos='right' data-theme='c' class='ui-btn ui-btn-icon-right ui-li-has-arrow ui-li ui-btn-up-c'>
+          <div align="center">
+<table width="95%" border="0" cellpadding="4" cellspacing="0">
+  <tr>
+    <td><p><span style="color:#81c44d; font-size:14px; font-weight:bold;">${ProductName}</span> </p>
+    <img src="${ImageUrl}" alt="No Image"   border="0" align="left" style="padding-bottom: 5px;" /><br/>
+    <p>{{html ProductDesc}} </p><br/>
+
+      <h3>Location:CityName</h3>
+      <hr style="width:85%; margin-top:10px; margin-bottom:10px;" />
+      
+     
+<table width="85%" border="0" cellspacing="4" cellpadding="0">
+  <tr>
+    <td width="30" valign="top"><img alt="icon" src="Images/direction.png" /></td>
+    <td  valign="middle"><strong>Distance:</strong>12 km</td>
+  </tr>
+  <tr>
+    <td width="30" valign="top"><img alt="icon" height="23" src="Images/googlePin.gif" width="22" /></td>
+    <td  valign="middle"><strong>Start Point:Start Point</strong></td>
+  </tr>
+  <tr>
+    <td width="30" valign="top">Rating.
+    
+                    <img width="23" height="23" alt="icon" align="absmiddle" src="Images/thumb_Level1.jpg">
+   
+                    
+    
+    </td>
+    <td  valign="middle"><strong>Track Rating:</strong> Rating</td>
+  </tr>
+  <tr>
+    <td width="30" valign="top"><img alt="icon" height="16" src="Images/clock.png" width="16" /></td>
+    <td  valign="middle"><strong>Approximate Duration:23 </strong> hr</td>
+  </tr>
+ 
+</table>
+ 
+ 
+      <p><span style="color:#696969; font-size:12px;">ProductDescription</span></p>
+      <hr style="width:100%; margin-top:10px; margin-bottom:10px;" />
+      <p> <strong>Facilities Available:&nbsp;</strong> <br />         
+      <span style="color:#696969; font-size:12px;">All Facelities</span></p>
+      <hr style="width:100%; margin-top:10px; margin-bottom:10px;" />
+      <p> <strong>Experiences:</strong> <br />
+          <span style="color:#696969; font-size:12px;">All Expnames </span></p>
+       <hr style="width:100%; margin-top:10px; margin-bottom:10px;" />
+      <p><strong>Address:</strong>
+            <span style="color:#696969; font-size:12px;">Address, CityName  </span></p> 
+       <hr style="width:100%; margin-top:10px; margin-bottom:10px;" />
+      <p><strong>Opening Hours:</strong>
+            <span style="color:#696969; font-size:12px;">TrackOpenTime </span></p>
+      <hr style="width:100%; margin-top:10px; margin-bottom:10px;" />
+      <p><strong>Return Walk:</strong>
+            <span style="color:#696969; font-size:12px;">
+            if one way   <img alt="icon" src="Images/arrow_right.png"/>
+            if two way   <img alt="icon" src="Images/arrow_undo.png"/>
+                                                                  </span></p>    
+      <hr style="width:100%; margin-top:10px; margin-bottom:10px;" />
+  </tr>
+</table>
+          </div>
+        </li>
+        </ul>
+    </div>
+        
+</div> 
+</div>
+  
 </script>
