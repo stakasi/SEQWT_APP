@@ -15,22 +15,23 @@
 		  <script type="text/javascript">
           $(document).ready(function () {});
 
-     function LoadATDWProducts(region) {
+          function LoadATDWProducts(region) {
+     $('#h1_Products').html(region + " ATDW Products");
     //var WebUrl = "http://maps.atdw.com.au/GeoWebService.svc/maps/product/87B11FC1-5FCA-4F03-94E6-6419BBC8F395/XML/keyword/gold%20coast/JOURNEY/50/1/";
     var WebUrl = "http://maps.atdw.com.au/GeoWebService.svc/maps/product/87B11FC1-5FCA-4F03-94E6-6419BBC8F395/XML/keyword/"+region+"/JOURNEY/50/1/";
     $.ajax({
         type: "GET",
         url: WebUrl,
         dataType: "xml",
-        success: xmlParser
-    })
+        success: function (data) { xmlParser(data, region); }
+    });
 }
 
-function xmlParser(xml) {
+function xmlParser(xml,region) {
      $('#div_AtdwInfo').html("<ul data-role='listview'  class='ui-listview' data-theme='c'>");
      $(xml).find("Product").each(function () {
          Rowdata = "<li data-corners='false' data-shadow='false' data-iconshadow='true' data-wrapperels='div' data-icon='arrow-r' data-iconpos='right' data-theme='c' class='ui-btn ui-btn-icon-right ui-li-has-arrow ui-li ui-btn-up-c'>"
-         Rowdata = Rowdata + "<a href='#ProductDescription'  onclick='Display_Desc(\"" + $(this).find("ID").text() + "\");' class='ui-link-inherit'>"
+         Rowdata = Rowdata + "<a href='#ProductDescription'  onclick=\"Display_Desc('" + $(this).find("ID").text() + "','" + region + "');\" class='ui-link-inherit'>"
          //Rowdata = Rowdata + "<a href='#ProductDescription'  onclick='Display_Desc(\"" +this + "\");' class='ui-link-inherit'>"
          Rowdata = Rowdata + "<h3 class='ui-li-heading'>" + $(this).find("ID").text() + "</h3>";
          Rowdata = Rowdata + "<p class='ui-li-desc'>" + $(this).find("Name").text() + "</p>";
@@ -43,10 +44,10 @@ function xmlParser(xml) {
 }
 
 
-function Display_Desc(ProductId) {
+function Display_Desc(ProductId,region) {
    
     //var WebUrl = "http://maps.atdw.com.au/GeoWebService.svc/product/87B11FC1-5FCA-4F03-94E6-6419BBC8F395/XML/" + ProductId;
-    var WebUrl = "http://maps.atdw.com.au/GeoWebService.svc/maps/product/87B11FC1-5FCA-4F03-94E6-6419BBC8F395/XML/keyword/gold%20coast/JOURNEY/50/1/";
+    var WebUrl = "http://maps.atdw.com.au/GeoWebService.svc/maps/product/87B11FC1-5FCA-4F03-94E6-6419BBC8F395/XML/keyword/"+region+"/JOURNEY/50/1/";
     $("#ProdDesc_Con").html("");
     $.ajax({
         type: "GET",
@@ -155,9 +156,9 @@ align="right" style="padding-bottom: 5px;" />
 </div>
 
          <div data-role="page" id="AllProducts">
-	       <div data-role="header"><h1>ATDW Data Records</h1></div>
+	       <div data-role="header"><h1 id="h1_Products">ATDW Data Records</h1></div>
 	
-	<div data-role="content">
+	     <div data-role="content">
 	<div id="div_AtdwInfo">
          ATDW Data loading....
 		<img src="Images/loading.gif" alt="Loading" />
